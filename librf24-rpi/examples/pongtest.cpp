@@ -21,7 +21,9 @@
 //#include <SPI.h>
 //#include "nRF24L01.h"
 //#include "RF24.h"
-#include "../librf24/RF24.h"
+#include "../librf24-bcm/RF24.h"
+//#include "../librf24-bcm/compatibility.h"
+//#include "../librf24-bcm/RF24_config.h"
 
 //#include "printf.h"
 
@@ -32,7 +34,8 @@
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
 
 //RF24 radio(9,10);
-RF24 radio("/dev/spidev0.0",2000000 , 25);  //spi device, speed and CE,only CE is NEEDED in RPI
+//RF24 radio("/dev/spidev0.0",2000000 , 25);  //spi device, speed and CE,only CE is NEEDED in RPI
+RF24 radio(25,1);
 
 
 // sets the role of this unit in hardware.  Connect to GND to be the 'pong' receiver

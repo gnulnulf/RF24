@@ -24,8 +24,8 @@
 
 #include <cstdlib>
 #include <iostream>
-#include "../librf24/RF24.h"
-#include "../librf24/compatibility.h"
+#include "../librf24-bcm/RF24.h"
+#include "../librf24-bcm/compatibility.h"
 
 using namespace std;
 
@@ -34,7 +34,9 @@ using namespace std;
 const uint64_t pipes[6] = { 0xF0F0F0F0D2LL, 0xF0F0F0F0E1LL, 0xF0F0F0F0E2LL, 0xF0F0F0F0E3LL, 0xF0F0F0F0F1, 0xF0F0F0F0F2 };
 
 // CE and CSN pins On header using GPIO numbering (not pin numbers)
-RF24 radio("/dev/spidev0.0",8000000,25);  // Setup for GPIO 25 CSN
+//RF24 radio("/dev/spidev0.0",8000000,25);  // Setup for GPIO 25 CSN
+RF24 radio(25,0);  // Setup for GPIO 25 CE
+
 
 
 void setup(void)

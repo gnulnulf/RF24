@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <iostream>
 //#include "lib/RF24/RF24.h"
-#include "../librf24/RF24.h"
+#include "../librf24-bcm/RF24.h"
 //#include "lib/RF24/compatibility.h"
 
 using namespace std;
@@ -39,8 +39,9 @@ using namespace std;
 
 // CE and CSN pins 
 //RF24 radio(8, 25);  //only CSN is NEEDED in RPI
-RF24 radio("/dev/spidev0.0",8000000 , 25);  //spi device, speed and CSN,only CSN is NEEDED in RPI
+//RF24 radio("/dev/spidev0.0",8000000 , 25);  //spi device, speed and CSN,only CSN is NEEDED in RPI
 
+RF24 radio(25,0);  //only CSN is NEEDED in RPI
 //
 // Channel info
 //
@@ -177,7 +178,7 @@ if ( reset_array == 1 ) {
   i = 0;
   while ( i < num_channels )
   {
-    printf("%x",min(0xf,values[i]&0xf));
+    printf("%x",min( 0xf,values[i]&0xf ));
     ++i;
   }
   printf("\n\r");

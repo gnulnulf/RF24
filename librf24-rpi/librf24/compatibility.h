@@ -15,6 +15,8 @@ extern "C" {
 #include <stddef.h>
 #include <time.h>
 #include <sys/time.h>
+#include <inttypes.h>
+
 
 // added attribute unused to avoid compiler warnings
 static struct timeval start __attribute__ ((unused)) ,end __attribute__ ((unused));
