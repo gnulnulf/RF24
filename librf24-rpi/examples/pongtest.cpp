@@ -35,7 +35,7 @@
 
 //RF24 radio(9,10);
 //RF24 radio("/dev/spidev0.0",2000000 , 25);  //spi device, speed and CE,only CE is NEEDED in RPI
-RF24 radio(25,1);
+RF24 radio(25,0);
 
 
 // sets the role of this unit in hardware.  Connect to GND to be the 'pong' receiver

@@ -377,6 +377,7 @@ bool RF24::begin(void)
   // Flush buffers
   flush_rx();
   flush_tx();
+	return true;
 }
 
 /****************************************************************************/

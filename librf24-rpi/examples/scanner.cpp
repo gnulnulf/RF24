@@ -178,7 +178,7 @@ if ( reset_array == 1 ) {
   i = 0;
   while ( i < num_channels )
   {
-    printf("%x",min( 0xf,values[i]&0xf ));
+    printf("%x",min( 0xf,( values[i]&0xf )));
     ++i;
   }
   printf("\n\r");

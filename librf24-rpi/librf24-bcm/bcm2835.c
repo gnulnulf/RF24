@@ -68,7 +68,7 @@ uint32_t bcm2835_peri_read(volatile uint32_t* paddr)
 	// Make sure we dont return the _last_ read which might get lost
 	// if subsequent code changes to a different peripheral
 	uint32_t ret = *paddr;
-	uint32_t dummy = *paddr;
+	//uint32_t dummy = *paddr;
 	return ret;
     }
 }
