@@ -33,9 +33,12 @@ using namespace std;
 // First pipe is for writing, 2nd, 3rd, 4th, 5th & 6th is for reading...
 const uint64_t pipes[6] = { 0xF0F0F0F0D2LL, 0xF0F0F0F0E1LL, 0xF0F0F0F0E2LL, 0xF0F0F0F0E3LL, 0xF0F0F0F0F1, 0xF0F0F0F0F2 };
 
-// CE and CSN pins On header using GPIO numbering (not pin numbers)
-//RF24 radio("/dev/spidev0.0",8000000,25);  // Setup for GPIO 25 CSN
-RF24 radio(25,0);  // Setup for GPIO 25 CE
+
+// Format is ( CSN, CE) for the two numbers are
+// CSN (GPIO to be used for CSN)
+// CE ( 0 = spidev0.0/CE0) or 1 = spidev0.1/CE1) or specify the GPIO
+
+RF24 radio(25,0);  
 
 
 
@@ -72,7 +75,7 @@ void setup(void)
 
 	radio.printDetails();
 	printf("\n\rOutput below : \n\r");
-	usleep(1000);
+	sleep(5);
 }
 
 void loop(void)

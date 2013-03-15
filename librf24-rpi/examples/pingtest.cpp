@@ -29,10 +29,11 @@
 // Hardware configuration
 //
 
-// Set up nRF24L01 radio on SPI bus plus pins 9 & 10
+// Format is ( CSN, CE) for the two numbers are
+// CSN (GPIO to be used for CE) 
+// CE ( 0 = spidev0.0/CE0) or 1 = spidev0.1/CE1) 
 
 RF24 radio(25,0);
-//RF24 radio("/dev/spidev0.0",8000000 , 25);  //spi device, speed and CSN,only CSN is NEEDED in RPI
 
 
 // sets the role of this unit in hardware.  Connect to GND to be the 'pong' receiver
