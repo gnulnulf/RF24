@@ -71,6 +71,23 @@ protected:
    */
   /**@{*/
 
+  /**
+   * Set chip select pin
+   *
+   * @param mode HIGH to take this unit off the SPI bus, LOW to put it on
+   */
+
+  void csn(int mode);
+
+  /**
+   * Set chip enable
+   *
+   * @param level HIGH to actively begin transmission or LOW to put in standby.  
+   * Please see datasheet for a much more detailed description of this pin.
+   * 
+   */
+
+  void ce(int level);
 
   /**
    * Read a chunk of data in from a register

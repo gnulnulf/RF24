@@ -82,7 +82,6 @@ typedef uint16_t prog_uint16_t;
 #define NRF_PI_CE    RPI_V2_GPIO_P1_15 	/* GPIO 22 pin 15 */
 #define NRF_PI_CS    BCM2835_SPI_CS1		/* Chip Select 1  */
 
-
 //#endif
 
 #endif // __RF24_CONFIG_H__

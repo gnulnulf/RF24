@@ -14,14 +14,36 @@
 
 /****************************************************************************/
 
+void RF24::csn(int mode)
+{
+}
+
+/****************************************************************************/
+
+
+/****************************************************************************/
+
+void RF24::ce(int level)
+{
+  bcm2835_gpio_write(ce_pin,level);
+}
+
+/****************************************************************************/
+
+
+/****************************************************************************/
+
 uint8_t RF24::read_register(uint8_t reg, uint8_t* buf, uint8_t len)
 {
   uint8_t status;
 
+  csn(LOW);
   status = bcm2835_spi_transfer( R_REGISTER | ( REGISTER_MASK & reg ) );
-  while ( len-- )
+  while ( len-- ) {
     *buf++ = bcm2835_spi_transfer(0xff);
+  }
 
+  csn(HIGH);
   return status;
 }
 
@@ -29,9 +51,11 @@ uint8_t RF24::read_register(uint8_t reg, uint8_t* buf, uint8_t len)
 
 uint8_t RF24::read_register(uint8_t reg)
 {
+  csn(LOW);
   bcm2835_spi_transfer( R_REGISTER | ( REGISTER_MASK & reg ) );
   uint8_t result = bcm2835_spi_transfer(0xff);
 
+  csn(HIGH);
   return result;
 }
 
@@ -41,10 +65,13 @@ uint8_t RF24::write_register(uint8_t reg, const uint8_t* buf, uint8_t len)
 {
   uint8_t status;
 
+  csn(LOW);
   status = bcm2835_spi_transfer( W_REGISTER | ( REGISTER_MASK & reg ) );
-  while ( len-- )
+  while ( len-- ) {
     bcm2835_spi_transfer(*buf++);
+  }
 
+  csn(HIGH);
   return status;
 }
 
@@ -57,9 +84,11 @@ uint8_t RF24::write_register(uint8_t reg, uint8_t value)
   if (debug) 
 		printf("write_register(%02x,%02x)\r\n",reg,value);
 
+  csn(LOW);
   status = bcm2835_spi_transfer( W_REGISTER | ( REGISTER_MASK & reg ) );
   bcm2835_spi_transfer(value);
 
+  csn(HIGH); 
   return status;
 }
 
@@ -77,12 +106,14 @@ uint8_t RF24::write_payload(const void* buf, uint8_t len)
   if (debug)
 		printf("[Writing %u bytes %u blanks]",data_len,blank_len);
   
+  csn(LOW);
   status = bcm2835_spi_transfer( W_TX_PAYLOAD );
   while ( data_len-- )
     bcm2835_spi_transfer(*current++);
   while ( blank_len-- )
     bcm2835_spi_transfer(0);
 
+  csn(HIGH);
   return status;
 }
 
@@ -99,12 +130,14 @@ uint8_t RF24::read_payload(void* buf, uint8_t len)
   if (debug)
 		printf("[Reading %u bytes %u blanks]",data_len,blank_len);
   
+  csn(LOW);
   status = bcm2835_spi_transfer( R_RX_PAYLOAD );
   while ( data_len-- )
     *current++ = bcm2835_spi_transfer(0xff);
   while ( blank_len-- )
     bcm2835_spi_transfer(0xff);
 
+  csn(HIGH);
   return status;
 }
 
@@ -114,9 +147,11 @@ uint8_t RF24::flush_rx(void)
 {
   uint8_t status;
 
+  csn(LOW);
   status = bcm2835_spi_transfer( FLUSH_RX );
-
-  return status;
+  csn(HIGH);
+  
+return status;
 }
 
 /****************************************************************************/
@@ -125,9 +160,11 @@ uint8_t RF24::flush_tx(void)
 {
   uint8_t status;
 
+  csn(LOW);
   status = bcm2835_spi_transfer( FLUSH_TX );
-
-  return status;
+  csn(HIGH);
+  
+return status;
 }
 
 /****************************************************************************/
@@ -136,9 +173,11 @@ uint8_t RF24::get_status(void)
 {
   uint8_t status;
 
+  csn(LOW);
   status = bcm2835_spi_transfer( NOP );
-
-  return status;
+  csn(HIGH);
+  
+return status;
 }
 
 /****************************************************************************/
@@ -198,19 +237,11 @@ void RF24::print_address_register(const char* name, uint8_t reg, uint8_t qty)
   printf("\r\n");
 }
 
+
 /****************************************************************************/
 
-RF24::RF24(uint8_t _cepin, uint8_t _cspin, uint32_t _spispeed):
-	ce_pin(_cepin), csn_pin(_cspin), spispeed( _spispeed),wide_band(true), p_variant(false),
-  payload_size(32), ack_payload_available(false), dynamic_payloads_enabled(false),
-  pipe0_reading_address(0)
-{
-
-}
-/****************************************************************************/
-
-RF24::RF24(uint8_t _cepin, uint8_t _cspin):
-  ce_pin(_cepin), csn_pin(_cspin), wide_band(true), p_variant(false), 
+RF24::RF24(uint8_t ce_pin, uint8_t csn_pin):
+  wide_band(true), p_variant(false), 
   payload_size(32), ack_payload_available(false), dynamic_payloads_enabled(false),
   pipe0_reading_address(0)
 {
@@ -308,9 +339,10 @@ bool RF24::begin(void)
 	if (!bcm2835_init())
 		return false;
 
-	// Initialise the chip enable
+	// Initialise the chip enable (ce) to output
 	bcm2835_gpio_fsel(ce_pin, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_write(ce_pin, LOW);
+	bcm2835_gpio_write(ce_pin,LOW);
+
 	bcm2835_spi_begin();
 		
   // wait 100ms
@@ -396,7 +428,7 @@ void RF24::startListening(void)
   flush_tx();
 
   // Go!
-  bcm2835_gpio_write(ce_pin, HIGH);
+  ce(HIGH);
 
   // wait for the radio to come up (130us actually only needed)
   delayMicroseconds(130);
@@ -406,7 +438,7 @@ void RF24::startListening(void)
 
 void RF24::stopListening(void)
 {
-  bcm2835_gpio_write(ce_pin, LOW);
+  ce(LOW);
   flush_tx();
   flush_rx();
 }
@@ -505,9 +537,9 @@ void RF24::startWrite( const void* buf, uint8_t len )
   write_payload( buf, len );
 
   // Allons!
-  bcm2835_gpio_write(ce_pin, HIGH);
+  ce(HIGH);
   delayMicroseconds(15);
-  bcm2835_gpio_write(ce_pin, LOW);
+  ce(LOW);
 }
 
 /****************************************************************************/
@@ -516,8 +548,10 @@ uint8_t RF24::getDynamicPayloadSize(void)
 {
   uint8_t result = 0;
 
+  csn(LOW);
   bcm2835_spi_transfer( R_RX_PL_WID );
   result = bcm2835_spi_transfer(0xff);
+  csn(HIGH);
 
   return result;
 }
@@ -646,8 +680,10 @@ void RF24::openReadingPipe(uint8_t child, uint64_t address)
 
 void RF24::toggle_features(void)
 {
+  csn(LOW);
   bcm2835_spi_transfer( ACTIVATE );
   bcm2835_spi_transfer( 0x73 );
+  csn(HIGH);
 }
 
 /****************************************************************************/
@@ -711,11 +747,14 @@ void RF24::writeAckPayload(uint8_t pipe, const void* buf, uint8_t len)
 {
   const uint8_t* current = reinterpret_cast<const uint8_t*>(buf);
 
+  csn(LOW);
   bcm2835_spi_transfer( W_ACK_PAYLOAD | ( pipe & 0b111 ) );
   const uint8_t max_payload_size = 32;
   uint8_t data_len = min(len,max_payload_size);
   while ( data_len-- )
     bcm2835_spi_transfer(*current++);
+
+  csn(HIGH);
 }
 
 /****************************************************************************/
