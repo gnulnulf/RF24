@@ -123,18 +123,10 @@ void setup(void)
   radio.enableDynamicPayloads();
   radio.setCRCLength( RF24_CRC_16 ) ;
 
-<<<<<<< HEAD:examples/pingpair/pingpair.pde
-  // optionally, reduce the payload size.  seems to
-  // improve reliability
-  //radio.setPayloadSize(8);
- radio.setPALevel(RF24_PA_LOW);
- radio.setChannel(0x4c);
-=======
   // optionally, increase the delay between retries & # of retries
   radio.setRetries( 15, 5 ) ;
   radio.setAutoAck( true ) ;
   //radio.setPALevel( RF24_PA_LOW ) ;
->>>>>>> aab3a529f898ec40e3d62510cd535d5e2d8a5ac4:examples/pingpair_multi_dyn/pingpair_multi_dyn.ino
 
   //
   // Open pipes to other nodes for communication

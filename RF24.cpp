@@ -497,11 +497,7 @@ static const char rf24_pa_dbm_e_str_0[] PROGMEM = "PA_MIN";
 static const char rf24_pa_dbm_e_str_1[] PROGMEM = "PA_LOW";
 static const char rf24_pa_dbm_e_str_2[] PROGMEM = "PA_HIGH";
 static const char rf24_pa_dbm_e_str_3[] PROGMEM = "PA_MAX";
-<<<<<<< HEAD
 static const char * const rf24_pa_dbm_e_str_P[] PROGMEM = { 
-=======
-static const char * const rf24_pa_dbm_e_str_P[] PROGMEM = {
->>>>>>> aab3a529f898ec40e3d62510cd535d5e2d8a5ac4
   rf24_pa_dbm_e_str_0,
   rf24_pa_dbm_e_str_1,
   rf24_pa_dbm_e_str_2,
